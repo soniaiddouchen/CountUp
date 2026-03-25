@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CountUp - Déclaration d'impôts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Parisienne&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #243b8f;
+      --primary-dark: #1a2d6b;
+      --accent: #6e5bb7;
+      --accent-soft: #8f82d6;
+      --text: #1c1d29;
+      --muted: #64677b;
+      --bg: #f5f7ff;
+      --card: rgba(255,255,255,0.82);
+      --border: rgba(255,255,255,0.45);
+      --shadow: 0 20px 50px rgba(20, 34, 87, 0.14);
+      --radius: 24px;
+      --max: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(110,91,183,0.20), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(36,59,143,0.18), transparent 22%),
+        linear-gradient(180deg, #eef2ff 0%, #f8f9ff 35%, #ffffff 100%);
+      overflow-x: hidden;
+    }
+
+    .bg-shape,
+    .bg-shape::before,
+    .bg-shape::after {
+      position: fixed;
+      inset: auto;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(40px);
+      z-index: -1;
+    }
+
+    .bg-shape {
+      width: 240px;
+      height: 240px;
+      background: rgba(36,59,143,0.12);
+      top: 90px;
+      left: -40px;
+      animation: floatBlob 11s ease-in-out infinite;
+    }
+
+    .bg-shape::before {
+      content: '';
+      width: 320px;
+      height: 320px;
+      background: rgba(110,91,183,0.12);
+      right: -1100px;
+      top: 260px;
+      animation: floatBlob 14s ease-in-out infinite reverse;
+    }
+
+    .bg-shape::after {
+      content: '';
+      width: 220px;
+      height: 220px;
+      background: rgba(96, 153, 255, 0.12);
+      left: 260px;
+      top: 520px;
+      animation: floatBlob 13s ease-in-out infinite;
+    }
+
+    @keyframes floatBlob {
+      0%,100% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(-24px) translateX(18px); }
+    }
+
+    .container {
+      width: min(calc(100% - 32px), var(--max));
+      margin: 0 auto;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(18px);
+      background: rgba(255,255,255,0.72);
+      border-bottom: 1px solid rgba(255,255,255,0.55);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .brand-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 10px 25px rgba(36,59,143,0.28);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-weight: 500;
+      transition: 0.25s ease;
+    }
+
+    .nav-links a:hover { color: var(--primary); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: none;
+      text-decoration: none;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 14px 22px;
+      cursor: pointer;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(36,59,143,0.18);
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+    }
+
+    .btn-secondary {
+      color: var(--primary);
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(36,59,143,0.12);
+    }
+
+    .hero {
+      padding: 70px 0 44px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(36,59,143,0.08);
+      color: var(--primary);
+      font-size: 0.92rem;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(36,59,143,0.08);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4.7rem);
+      line-height: 1.02;
+      margin: 18px 0 16px;
+      letter-spacing: -1.8px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.06rem;
+      line-height: 1.85;
+      color: var(--muted);
+      max-width: 650px;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: 20px;
+      padding: 18px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.4rem;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .visual-card {
+      position: relative;
+      min-height: 600px;
+      border-radius: 34px;
+      overflow: hidden;
+      box-shadow: 0 28px 60px rgba(31, 46, 112, 0.20);
+      background: linear-gradient(160deg, rgba(36,59,143,0.96), rgba(67,60,129,0.96));
+      isolation: isolate;
+    }
+
+    .visual-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(140deg, rgba(255,255,255,0.08), transparent 45%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.14), transparent 20%),
+        radial-gradient(circle at 15% 80%, rgba(255,255,255,0.12), transparent 18%);
+      z-index: 0;
+    }
+
+    .card-top {
+      position: absolute;
+      inset: 0;
+      padding: 30px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .logo-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .mini-tag {
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: white;
+      font-size: 0.88rem;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
+    }
+
+    .glass-panel {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.18);
+      backdrop-filter: blur(16px);
+      border-radius: 26px;
+      padding: 24px;
+      color: white;
+      max-width: 84%;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.12);
+      animation: rise 5s ease-in-out infinite;
+    }
+
+    .glass-panel h3 {
+      margin: 0 0 10px;
+      font-size: 1.55rem;
+    }
+
+    .glass-panel p {
+      margin: 0;
+      line-height: 1.7;
+      color: rgba(255,255,255,0.86);
+    }
+
+    .floating-box {
+      position: absolute;
+      background: white;
+      color: var(--text);
+      border-radius: 22px;
+      box-shadow: 0 18px 40px rgba(17, 30, 79, 0.18);
+      padding: 18px;
+      min-width: 210px;
+      animation: floatBox 6s ease-in-out infinite;
+    }
+
+    .floating-box small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .fb-1 { bottom: 28px; left: 26px; }
+    .fb-2 { top: 118px; right: 24px; animation-delay: 1.4s; }
+
+    .tick-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .tick-list li::before {
+      content: '✓';
+      color: var(--primary);
+      font-weight: 800;
+      margin-right: 8px;
+    }
+
+    @keyframes floatBox {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+
+    @keyframes rise {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
+    section {
+      padding: 34px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      max-width: 740px;
+      margin: 0 auto 28px;
+    }
+
+    .section-title span {
+      display: inline-block;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.94rem;
+      letter-spacing: 0.4px;
+      margin-bottom: 8px;
+    }
+
+    .section-title h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -1px;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .services-grid,
+    .audience-grid,
+    .reasons-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .service-card,
+    .audience-card,
+    .reason-card,
+    .contact-card,
+    .cta-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: transform 0.28s ease, box-shadow 0.28s ease;
+    }
+
+    .service-card:hover,
+    .audience-card:hover,
+    .reason-card:hover,
+    .contact-card:hover {
+      transform: translateY(-7px);
+      box-shadow: 0 24px 55px rgba(20, 34, 87, 0.18);
+    }
+
+    .icon-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, rgba(36,59,143,0.10), rgba(110,91,183,0.15));
+      margin-bottom: 16px;
+    }
+
+    .service-card h3,
+    .audience-card h3,
+    .reason-card h3,
+    .contact-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+    }
+
+    .service-card p,
+    .audience-card p,
+    .reason-card p,
+    .contact-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 0.97rem;
+    }
+
+    .why-wrap {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .why-box {
+      background: linear-gradient(160deg, #1f3278, #45387e);
+      color: white;
+      border-radius: 34px;
+      padding: 34px;
+      min-height: 100%;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 28px 60px rgba(31,46,112,0.18);
+    }
+
+    .why-box::before {
+      content: '';
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      right: -70px;
+      top: -70px;
+    }
+
+    .why-box h3 {
+      font-size: 2rem;
+      margin: 0 0 14px;
+    }
+
+    .why-box p {
+      color: rgba(255,255,255,0.85);
+      line-height: 1.8;
+      margin: 0 0 18px;
+      max-width: 500px;
+    }
+
+    .signature {
+      font-family: 'Parisienne', cursive;
+      font-size: 2.1rem;
+      color: #ffdba4;
+    }
+
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .contact-main {
+      background: linear-gradient(140deg, #fdfdff, #f0f3ff);
+      border-radius: 34px;
+      padding: 30px;
+      border: 1px solid rgba(36,59,143,0.08);
+      box-shadow: 0 24px 60px rgba(28,39,96,0.12);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .contact-card.full { grid-column: 1 / -1; }
+
+    .cta-card {
+      background: linear-gradient(160deg, rgba(36,59,143,0.96), rgba(110,91,183,0.92));
+      color: white;
+      border: none;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+    }
+
+    .cta-card p {
+      color: rgba(255,255,255,0.88);
+      line-height: 1.85;
+    }
+
+    .cta-highlight {
+      display: inline-block;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      margin-bottom: 12px;
+      font-weight: 600;
+      width: fit-content;
+    }
+
+    .footer {
+      padding: 26px 0 40px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: 0.8s ease;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mobile-menu {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.55rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .why-wrap,
+      .contact-wrap,
+      .contact-main {
+        grid-template-columns: 1fr;
+      }
+
+      .services-grid,
+      .audience-grid,
+      .reasons-grid,
+      .stats {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+
+      .glass-panel { max-width: 100%; }
+    }
+
+    @media (max-width: 820px) {
+      .nav-links {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 16px;
+        right: 16px;
+        background: rgba(255,255,255,0.97);
+        border: 1px solid rgba(36,59,143,0.08);
+        border-radius: 22px;
+        box-shadow: 0 20px 45px rgba(20,34,87,0.14);
+        padding: 18px;
+        display: none;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links.show { display: flex; }
+      .mobile-menu { display: block; }
+      .navbar { position: sticky; }
+      .stats,
+      .services-grid,
+      .audience-grid,
+      .reasons-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 38px; }
+      .hero h1 { font-size: 2.5rem; }
+      .visual-card { min-height: 520px; }
+      .floating-box { position: static; margin-top: 16px; }
+      .card-top { gap: 18px; }
+    }
+
+    @media (max-width: 560px) {
+      .container { width: min(calc(100% - 22px), var(--max)); }
+      .service-card,
+      .audience-card,
+      .reason-card,
+      .contact-card,
+      .cta-card,
+      .why-box,
+      .contact-main { padding: 20px; }
+      .hero-actions { flex-direction: column; }
+      .btn { width: 100%; }
+      .visual-card { min-height: 580px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-shape"></div>
+
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#accueil" class="brand">
+        <div class="brand-badge">CU</div>
+        <div>
+          <div>COUNTUP</div>
+          <small style="display:block;color:var(--muted);font-weight:500;">Déclaration d'impôts</small>
+        </div>
+      </a>
+
+      <button class="mobile-menu" id="menuBtn">☰</button>
+
+      <div class="nav-links" id="navLinks">
+        <a href="#services">Services</a>
+        <a href="#clientele">Clientèle</a>
+        <a href="#pourquoi">Pourquoi nous</a>
+        <a href="#contact">Contact</a>
+        <a class="btn btn-primary" href="tel:4389949140">Prendre rendez-vous</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" id="accueil">
+      <div class="container hero-grid">
+        <div class="reveal">
+          <div class="eyebrow">✓ Accompagnement fiscal complet • Québec</div>
+          <h1>Votre déclaration d'impôts, <span>sans stress</span> et avec clarté.</h1>
+          <p>
+            Un service humain, professionnel et efficace pour analyser votre situation fiscale,
+            optimiser vos crédits et transmettre vos déclarations dans les délais, avec un accompagnement du début à la fin.
+          </p>
+
+          <div class="hero-actions">
+            <a href="tel:4389949140" class="btn btn-primary">Appeler maintenant</a>
+            <a href="#contact" class="btn btn-secondary">Voir les coordonnées</a>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <strong>100%</strong>
+              <span>Accompagnement personnalisé</span>
+            </div>
+            <div class="stat">
+              <strong>ARC + RQ</strong>
+              <span>Délais respectés</span>
+            </div>
+            <div class="stat">
+              <strong>Simple</strong>
+              <span>Explications claires</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="visual-card reveal">
+          <div class="card-top">
+            <div class="logo-line">
+              <div style="color:white; font-size:1.9rem; font-weight:800; line-height:1;">COUNT<span style="color:#d9dcf1; font-weight:300;">UP</span></div>
+              <div class="mini-tag">Places limitées</div>
+            </div>
+
+            <div class="glass-panel">
+              <h3>Mira Kacher</h3>
+              <p>
+                Analyse complète • Optimisation des crédits • Production et transmission des déclarations • Confidentialité garantie.
+              </p>
+            </div>
+
+            <div style="display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between;">
+              <div class="floating-box fb-1">
+                <small>Clientèle</small>
+                <strong>Salariés, PME, familles, travailleurs autonomes</strong>
+              </div>
+
+              <div class="floating-box fb-2">
+                <small>Disponibilité</small>
+                <strong>En présentiel et à distance</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <div class="section-title reveal">
+          <span>NOS SERVICES</span>
+          <h2>Un service fiscal complet et rassurant</h2>
+          <p>
+            Chaque étape est pensée pour offrir une expérience claire, fluide et professionnelle.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card reveal">
+            <div class="icon-wrap">📊</div>
+            <h3>Analyse complète</h3>
+            <p>Étude détaillée de votre situation fiscale pour identifier les meilleures options selon votre profil.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="icon-wrap">💡</div>
+            <h3>Optimisation des crédits</h3>
+            <p>Recherche des crédits et déductions applicables afin de maximiser vos avantages fiscaux.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="icon-wrap">📤</div>
+            <h3>Transmission des déclarations</h3>
+            <p>Préparation et envoi de vos déclarations dans le respect des exigences officielles.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="icon-wrap">🕒</div>
+            <h3>Respect des délais</h3>
+            <p>Suivi rigoureux pour respecter les échéances de l'ARC et de Revenu Québec.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="icon-wrap">🔒</div>
+            <h3>Confidentialité garantie</h3>
+            <p>Vos informations personnelles et financières sont traitées avec sérieux et discrétion.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <div class="icon-wrap">🤝</div>
+            <h3>Accompagnement humain</h3>
+            <p>Des explications simples, sans jargon, et un suivi du début à la fin de votre dossier.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="clientele">
+      <div class="container">
+        <div class="section-title reveal">
+          <span>POUR QUI ?</span>
+          <h2>Des services adaptés à plusieurs profils</h2>
+          <p>Une approche flexible selon votre réalité personnelle, familiale ou professionnelle.</p>
+        </div>
+
+        <div class="audience-grid">
+          <article class="audience-card reveal">
+            <div class="icon-wrap">👨‍💼</div>
+            <h3>Salariés</h3>
+            <p>Déclarations simples ou avec ajustements particuliers selon votre situation.</p>
+          </article>
+
+          <article class="audience-card reveal">
+            <div class="icon-wrap">🧾</div>
+            <h3>Travailleurs autonomes</h3>
+            <p>Gestion plus précise des revenus, dépenses admissibles et obligations fiscales.</p>
+          </article>
+
+          <article class="audience-card reveal">
+            <div class="icon-wrap">🏠</div>
+            <h3>Propriétaires de biens locatifs</h3>
+            <p>Accompagnement adapté pour les revenus de location et les déductions applicables.</p>
+          </article>
+
+          <article class="audience-card reveal">
+            <div class="icon-wrap">🏢</div>
+            <h3>Petites et moyennes entreprises</h3>
+            <p>Une approche professionnelle pour soutenir la conformité et l'optimisation.</p>
+          </article>
+
+          <article class="audience-card reveal">
+            <div class="icon-wrap">👨‍👩‍👧</div>
+            <h3>Familles / Couples</h3>
+            <p>Coordination des déclarations pour profiter des crédits et avantages disponibles.</p>
+          </article>
+
+          <article class="audience-card reveal">
+            <div class="icon-wrap">🌍</div>
+            <h3>Nouveaux arrivants</h3>
+            <p>Un accompagnement clair pour mieux comprendre le système fiscal au Québec et au Canada.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="pourquoi">
+      <div class="container why-wrap">
+        <div class="why-box reveal">
+          <div class="mini-tag" style="margin-bottom:14px;">Pourquoi choisir CountUp ?</div>
+          <h3>Un service pro, humain et rassurant</h3>
+          <p>
+            L'objectif n'est pas seulement de produire une déclaration, mais de vous accompagner avec méthode,
+            transparence et efficacité dans chaque étape.
+          </p>
+          <div class="signature">Sans stress !</div>
+        </div>
+
+        <div class="reasons-grid">
+          <article class="reason-card reveal">
+            <div class="icon-wrap">✅</div>
+            <h3>Clarté</h3>
+            <p>Des explications simples et accessibles, même pour les situations plus complexes.</p>
+          </article>
+
+          <article class="reason-card reveal">
+            <div class="icon-wrap">⚡</div>
+            <h3>Efficacité</h3>
+            <p>Une démarche structurée pour éviter les oublis et aller droit au but.</p>
+          </article>
+
+          <article class="reason-card reveal">
+            <div class="icon-wrap">🧠</div>
+            <h3>Expertise</h3>
+            <p>Une analyse attentive pour optimiser les crédits et déductions disponibles.</p>
+          </article>
+
+          <article class="reason-card reveal">
+            <div class="icon-wrap">💬</div>
+            <h3>Écoute</h3>
+            <p>Chaque client a une situation unique, qui mérite une attention personnalisée.</p>
+          </article>
+
+          <article class="reason-card reveal">
+            <div class="icon-wrap">🔐</div>
+            <h3>Confiance</h3>
+            <p>Une prise en charge sérieuse de vos documents et de vos informations confidentielles.</p>
+          </article>
+
+          <article class="reason-card reveal">
+            <div class="icon-wrap">📍</div>
+            <h3>Flexibilité</h3>
+            <p>Service disponible en présentiel et à distance selon vos préférences.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container contact-wrap">
+        <div class="cta-card reveal">
+          <div>
+            <div class="cta-highlight">Places limitées – Prenez rendez-vous</div>
+            <h2 style="margin:0 0 10px; font-size:2.2rem;">Besoin d'aide pour votre déclaration ?</h2>
+            <p>
+              Prenez contact dès maintenant pour bénéficier d'un accompagnement professionnel,
+              clair et adapté à votre situation.
+            </p>
+          </div>
+
+          <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:20px;">
+            <a href="tel:4389949140" class="btn btn-secondary">📞 Appeler</a>
+            <a href="mailto:client@countup.ca" class="btn btn-secondary">✉️ Envoyer un courriel</a>
+          </div>
+        </div>
+
+        <div class="contact-main reveal">
+          <article class="contact-card">
+            <div class="icon-wrap">👤</div>
+            <h3>Responsable</h3>
+            <p>Mira Kacher</p>
+          </article>
+
+          <article class="contact-card">
+            <div class="icon-wrap">📞</div>
+            <h3>Téléphone</h3>
+            <p><a href="tel:4389949140" style="color:inherit; text-decoration:none;">438 994 9140</a></p>
+          </article>
+
+          <article class="contact-card">
+            <div class="icon-wrap">📧</div>
+            <h3>Courriel</h3>
+            <p><a href="mailto:client@countup.ca" style="color:inherit; text-decoration:none;">client@countup.ca</a></p>
+          </article>
+
+          <article class="contact-card">
+            <div class="icon-wrap">📍</div>
+            <h3>Adresse</h3>
+            <p>2, Place Laval, Suite 485<br>Laval QC H7N 1A1</p>
+          </article>
+
+          <article class="contact-card full">
+            <div class="icon-wrap">🗓️</div>
+            <h3>Disponibilité</h3>
+            <p>Service offert en présentiel et à distance. Contactez-nous pour réserver votre rendez-vous rapidement.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer container">
+    © CountUp • Déclaration d'impôts sans stress • En présentiel et à distance
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+    menuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('show');
+    });
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('show'));
+    });
+  </script>
+</body>
+</html>
