@@ -632,6 +632,154 @@
       .btn { width: 100%; }
       .visual-card { min-height: 580px; }
     }
+    /* ===== Secrétaire virtuelle ===== */
+.chatbot-toggle {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  z-index: 9999;
+  color: white;
+  font-size: 1.6rem;
+  box-shadow: 0 18px 35px rgba(36,59,143,0.28);
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  transition: transform 0.25s ease;
+}
+
+.chatbot-toggle:hover {
+  transform: scale(1.06);
+}
+
+.chatbot {
+  position: fixed;
+  right: 22px;
+  bottom: 98px;
+  width: 360px;
+  max-width: calc(100% - 24px);
+  background: rgba(255,255,255,0.98);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(20,34,87,0.20);
+  border: 1px solid rgba(36,59,143,0.10);
+  z-index: 9998;
+  display: none;
+}
+
+.chatbot.show {
+  display: block;
+}
+
+.chatbot-header {
+  padding: 18px 18px 14px;
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+.chatbot-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.chatbot-header p {
+  margin: 6px 0 0;
+  font-size: 0.92rem;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.5;
+}
+
+.chatbot-body {
+  padding: 16px;
+  max-height: 420px;
+  overflow-y: auto;
+  background: #f8faff;
+}
+
+.chatbot-msg {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.bot-msg {
+  background: white;
+  color: var(--text);
+  border: 1px solid rgba(36,59,143,0.08);
+}
+
+.user-msg {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  margin-left: 40px;
+}
+
+.chatbot-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.chatbot-option {
+  border: none;
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--primary);
+  background: rgba(36,59,143,0.08);
+  transition: 0.2s ease;
+}
+
+.chatbot-option:hover {
+  background: rgba(36,59,143,0.14);
+}
+
+.chatbot-footer {
+  padding: 14px;
+  border-top: 1px solid rgba(36,59,143,0.08);
+  background: white;
+  display: flex;
+  gap: 10px;
+}
+
+.chatbot-footer input {
+  flex: 1;
+  border: 1px solid rgba(36,59,143,0.12);
+  border-radius: 999px;
+  padding: 12px 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.chatbot-footer button {
+  border: none;
+  border-radius: 999px;
+  padding: 12px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+}
+
+@media (max-width: 560px) {
+  .chatbot {
+    right: 12px;
+    bottom: 88px;
+    width: calc(100% - 24px);
+  }
+
+  .chatbot-toggle {
+    right: 12px;
+    bottom: 12px;
+  }
+}
   </style>
 </head>
 <body>
@@ -907,48 +1055,183 @@
             <h3>Courriel</h3>
             <p><a href="mailto:client@countup.ca" style="color:inherit; text-decoration:none;">client@countup.ca</a></p>
           </article>
-
+          <a href="https://www.google.com/maps/search/?api=1&query=2+Place+Laval+Suite+485+Laval+QC+H7N+1A1"
+          target="_blank"
+          style="text-decoration:none; color:inherit;">
           <article class="contact-card">
             <div class="icon-wrap">📍</div>
             <h3>Adresse</h3>
             <p>2, Place Laval, Suite 485<br>Laval QC H7N 1A1</p>
           </article>
-
-          <article class="contact-card full">
-            <div class="icon-wrap">🗓️</div>
-            <h3>Disponibilité</h3>
-            <p>Service offert en présentiel et à distance. Contactez-nous pour réserver votre rendez-vous rapidement.</p>
-          </article>
-        </div>
+        </a>
+        <article class="contact-card full">
+          <div class="icon-wrap">🗓️</div>
+          <h3>Disponibilité</h3>
+          <p>Service offert en présentiel et à distance. Contactez-nous pour réserver votre rendez-vous rapidement.</p>
+        </article>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+</main>
 
   <footer class="footer container">
     © CountUp • Déclaration d'impôts sans stress • En présentiel et à distance
   </footer>
 
-  <script>
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
-        }
-      });
-    }, { threshold: 0.12 });
 
-    reveals.forEach(el => observer.observe(el));
+  <!-- ===== Secrétaire virtuelle ===== -->
+<button class="chatbot-toggle" id="chatbotToggle">💬</button>
 
-    const menuBtn = document.getElementById('menuBtn');
-    const navLinks = document.getElementById('navLinks');
-    menuBtn.addEventListener('click', () => {
-      navLinks.classList.toggle('show');
+<div class="chatbot" id="chatbotBox">
+  <div class="chatbot-header">
+    <h3>Secrétaire virtuelle CountUp</h3>
+    <p>Bonjour 👋 Je peux vous aider rapidement pour votre déclaration d'impôts.</p>
+  </div>
+
+  <div class="chatbot-body" id="chatbotMessages">
+    <div class="chatbot-msg bot-msg">
+      Bienvenue chez CountUp 🌸<br>
+      Comment puis-je vous aider ?
+    </div>
+
+    <div class="chatbot-options">
+      <button class="chatbot-option" onclick="quickReply('Prendre rendez-vous')">Prendre rendez-vous</button>
+      <button class="chatbot-option" onclick="quickReply('Connaître les services')">Nos services</button>
+      <button class="chatbot-option" onclick="quickReply('Connaître les tarifs')">Tarifs</button>
+      <button class="chatbot-option" onclick="quickReply('Contacter CountUp')">Contact</button>
+    </div>
+  </div>
+
+  <div class="chatbot-footer">
+    <input type="text" id="chatbotInput" placeholder="Écrivez votre message..." />
+    <button onclick="sendMessage()">Envoyer</button>
+  </div>
+</div>
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+      }
     });
+  }, { threshold: 0.12 });
 
-    document.querySelectorAll('.nav-links a').forEach(link => {
-      link.addEventListener('click', () => navLinks.classList.remove('show'));
-    });
-  </script>
+  reveals.forEach(el => observer.observe(el));
+
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.getElementById('navLinks');
+  menuBtn.addEventListener('click', () => {
+    navLinks.classList.toggle('show');
+  });
+
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => navLinks.classList.remove('show'));
+  });
+
+  /* ===== Chatbot ===== */
+  const chatbotToggle = document.getElementById('chatbotToggle');
+  const chatbotBox = document.getElementById('chatbotBox');
+  const chatbotMessages = document.getElementById('chatbotMessages');
+  const chatbotInput = document.getElementById('chatbotInput');
+
+  chatbotToggle.addEventListener('click', () => {
+    chatbotBox.classList.toggle('show');
+  });
+
+  function addMessage(text, type = 'bot') {
+    const msg = document.createElement('div');
+    msg.className = `chatbot-msg ${type === 'user' ? 'user-msg' : 'bot-msg'}`;
+    msg.innerHTML = text;
+    chatbotMessages.appendChild(msg);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  function botReply(message) {
+    const msg = message.toLowerCase();
+
+    if (msg.includes('rendez') || msg.includes('rdv')) {
+      addMessage(
+        `Avec plaisir 😊<br><br>
+        Vous pouvez prendre contact immédiatement :<br>
+        📞 <a href="tel:4389949140">438 994 9140</a><br>
+        📧 <a href="mailto:client@countup.ca">client@countup.ca</a><br><br>
+        Souhaitez-vous un rendez-vous en présentiel ou à distance ?`
+      );
+      return;
+    }
+
+    if (msg.includes('service')) {
+      addMessage(
+        `Voici nos principaux services :<br><br>
+        • Analyse complète<br>
+        • Optimisation des crédits<br>
+        • Transmission des déclarations<br>
+        • Accompagnement humain<br>
+        • Service en présentiel et à distance`
+      );
+      return;
+    }
+
+    if (msg.includes('tarif') || msg.includes('prix') || msg.includes('coût')) {
+      addMessage(
+        `Pour connaître les tarifs exacts selon votre situation, le mieux est de nous contacter directement.<br><br>
+        📞 <a href="tel:4389949140">438 994 9140</a><br>
+        📧 <a href="mailto:client@countup.ca">client@countup.ca</a>`
+      );
+      return;
+    }
+
+    if (msg.includes('contact') || msg.includes('email') || msg.includes('courriel') || msg.includes('telephone') || msg.includes('téléphone')) {
+      addMessage(
+        `Vous pouvez joindre CountUp ici :<br><br>
+        👤 Mira Kacher<br>
+        📞 <a href="tel:4389949140">438 994 9140</a><br>
+        📧 <a href="mailto:client@countup.ca">client@countup.ca</a><br>
+        📍 2, Place Laval, Suite 485, Laval QC H7N 1A1`
+      );
+      return;
+    }
+
+    if (msg.includes('distance') || msg.includes('présentiel') || msg.includes('presentiel')) {
+      addMessage(
+        `Le service est offert en présentiel et à distance selon vos préférences 😊`
+      );
+      return;
+    }
+
+    addMessage(
+      `Merci pour votre message 💙<br><br>
+      Pour une réponse rapide et adaptée à votre situation, vous pouvez contacter directement CountUp :<br>
+      📞 <a href="tel:4389949140">438 994 9140</a><br>
+      📧 <a href="mailto:client@countup.ca">client@countup.ca</a>`
+    );
+  }
+
+  function sendMessage() {
+    const text = chatbotInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, 'user');
+    chatbotInput.value = '';
+
+    setTimeout(() => {
+      botReply(text);
+    }, 500);
+  }
+
+  function quickReply(text) {
+    addMessage(text, 'user');
+    setTimeout(() => {
+      botReply(text);
+    }, 400);
+  }
+
+  chatbotInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+</script>
 </body>
 </html>
